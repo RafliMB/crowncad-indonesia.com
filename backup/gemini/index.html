@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrownCAD — Platform CAD 3D Cloud-Native Indonesia</title>
+    <meta name="description" content="CrownCAD mempercepat pengembangan produk melalui platform desain 3D berbasis browser dengan kolaborasi real-time, dual-kernel (DGM + DCS) buatan dalam negeri.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Lenis Smooth Scroll -->
+    <script src="assets/lenis.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Instrument Serif"', 'serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(15, 23, 42, 0.06)',
+                        'card': '0 4px 24px -4px rgba(15, 23, 42, 0.05)',
+                        'glow-blue': '0 20px 45px -10px rgba(37, 99, 235, 0.45)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+            overflow-x: hidden;
+        }
+
+        .serif-accent {
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+            letter-spacing: -0.01em;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* === Floating Clean Pill Navbar (00:00) === */
+        .navbar-pill {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.06);
+        }
+
+        /* === 3D Glossy Icons (CoreShift Style) === */
+        .icon-3d-blue {
+            background: linear-gradient(145deg, #3B82F6 0%, #1D4ED8 100%);
+            box-shadow: 
+                0 20px 40px -12px rgba(29, 78, 216, 0.55),
+                inset 0 2px 4px rgba(255, 255, 255, 0.45),
+                inset 0 -4px 8px rgba(15, 23, 42, 0.25);
+        }
+        .icon-3d-amber {
+            background: linear-gradient(145deg, #FDE047 0%, #F59E0B 100%);
+            box-shadow: 0 12px 24px -6px rgba(245, 158, 11, 0.4), inset 0 2px 3px rgba(255,255,255,0.6);
+        }
+        .icon-3d-sky {
+            background: linear-gradient(145deg, #38BDF8 0%, #0284C7 100%);
+            box-shadow: 0 12px 24px -6px rgba(2, 132, 199, 0.4), inset 0 2px 3px rgba(255,255,255,0.5);
+        }
+        .icon-3d-rose {
+            background: linear-gradient(145deg, #FB7185 0%, #E11D48 100%);
+            box-shadow: 0 12px 24px -6px rgba(225, 29, 72, 0.4), inset 0 2px 3px rgba(255,255,255,0.5);
+        }
+
+        /* === Hero SVG Node Lines Animation === */
+        .node-line {
+            stroke-dasharray: 8 8;
+            animation: dashFlow 20s linear infinite;
+        }
+        @keyframes dashFlow {
+            to { stroke-dashoffset: -160; }
+        }
+
+        .float-slow { animation: floatY 5s ease-in-out infinite; }
+        .float-med { animation: floatY 4s ease-in-out infinite 1s; }
+        .float-fast { animation: floatY 6s ease-in-out infinite 0.5s; }
+
+        @keyframes floatY {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* === Section 2: Expanding Scatter Gallery (00:01 - 00:03) === */
+        .scatter-item {
+            transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.9s ease;
+            will-change: transform, opacity;
+        }
+        @media (min-width: 1024px) {
+            .scatter-stage:not(.is-expanded) .scatter-item {
+                transform: translate(var(--init-x, 0px), var(--init-y, 0px)) scale(0.45);
+                opacity: 0;
+            }
+            .scatter-stage.is-expanded .scatter-item {
+                transform: translate(0px, 0px) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* === Section 3: Bento Live Pill Cycling (00:04 - 00:06) === */
+        .insight-pill {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* === Section 4: Rotating Arc Wheel (00:07 - 00:10) === */
+        .arc-card {
+            transition: all 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, opacity;
+            cursor: pointer;
+        }
+
+        /* === Section 5: Envelope Unfold & 3-Card Carousel (00:11 - 00:14) === */
+        .envelope-wrapper {
+            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .review-card {
+            transition: all 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* === Scroll Reveal === */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+
+        /* === Giant Blurred Footer Watermark (00:15 - 00:17) === */
+        .footer-watermark {
+            font-size: clamp(4.5rem, 17vw, 15.5rem);
+            line-height: 0.82;
+            letter-spacing: -0.04em;
+            background: linear-gradient(180deg, rgba(37, 99, 235, 0.85) 0%, rgba(56, 189, 248, 0.35) 65%, rgba(255, 255, 255, 0) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: blur(3px);
+            user-select: none;
+            pointer-events: none;
+            transition: filter 0.6s ease;
+        }
+        .footer-watermark:hover {
+            filter: blur(0px);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-blue-600 to-sky-400 z-50 origin-left" style="transform: scaleX(0);"></div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 lg:hidden transform translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="absolute inset-0 bg-white/95 backdrop-blur-xl"></div>
+        <div class="relative h-full flex flex-col p-6 pt-24">
+            <nav class="flex flex-col gap-3 mb-8">
+                <a href="#mengapa" class="text-lg font-bold text-slate-900 hover:text-blue-600 transition py-3 border-b border-slate-100">Mengapa CrownCAD?</a>
+                <a href="#produk" class="text-lg font-bold text-slate-900 hover:text-blue-600 transition py-3 border-b border-slate-100">Produk</a>
+                <a href="#kompatibilitas" class="text-lg font-bold text-slate-900 hover:text-blue-600 transition py-3 border-b border-slate-100">Integrasi CAD</a>
+                <a href="#solusi" class="text-lg font-bold text-slate-900 hover:text-blue-600 transition py-3 border-b border-slate-100">Solusi Cloud</a>
+                <a href="#harga" class="text-lg font-bold text-slate-900 hover:text-blue-600 transition py-3 border-b border-slate-100">Harga</a>
+            </nav>
+            <div class="flex flex-col gap-3 mt-auto">
+                <a href="#masuk" class="text-sm font-semibold px-6 py-3.5 rounded-full text-center hover:bg-slate-100 transition text-slate-800 border border-slate-200">Masuk</a>
+                <a href="#daftar" class="text-sm font-bold px-6 py-3.5 rounded-full shadow-lg text-center transition bg-slate-900 text-white hover:bg-blue-600">
+                    Daftar Gratis
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- NAVBAR (Floating White Pill - 00:00)         -->
+    <!-- ============================================ -->
+    <header id="main-header" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 navbar-pill rounded-full w-[94%] max-w-4xl px-4 sm:px-6 py-2.5 transition-all duration-300">
+        <div class="flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2.5 group">
+                <img src="assets/logo.png" alt="CrownCAD" class="h-8 w-auto object-contain group-hover:scale-105 transition" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="hidden items-center gap-2 font-extrabold text-lg tracking-tight text-slate-900">
+                    <span class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm shadow-sm">
+                        <i class="ph-fill ph-crown"></i>
+                    </span>
+                    <span>CrownCAD</span>
+                </div>
+            </a>
+
+            <nav class="hidden lg:flex items-center gap-7 text-xs font-semibold text-slate-600">
+                <a href="#produk" class="hover:text-slate-950 transition">Produk</a>
+                <a href="#mengapa" class="hover:text-slate-950 transition">Fitur</a>
+                <a href="#kompatibilitas" class="hover:text-slate-950 transition">Kompatibilitas</a>
+                <a href="#solusi" class="hover:text-slate-950 transition">Solusi</a>
+                <a href="#harga" class="hover:text-slate-950 transition">Harga</a>
+            </nav>
+
+            <div class="flex items-center gap-2">
+                <a href="#masuk" class="hidden lg:inline-flex text-xs font-semibold px-4 py-2 rounded-full hover:bg-slate-100 transition text-slate-700 border border-slate-200/80">
+                    Masuk
+                </a>
+                <a href="#daftar" class="hidden lg:inline-flex text-xs font-semibold px-5 py-2.5 rounded-full bg-slate-900 text-white hover:bg-blue-600 transition shadow-sm">
+                    Daftar Gratis
+                </a>
+                <button id="mobile-menu-btn" class="lg:hidden flex items-center justify-center w-9 h-9 rounded-full hover:bg-slate-100 transition text-slate-800" aria-label="Toggle menu" aria-expanded="false">
+                    <i class="ph-bold ph-list text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- HERO SECTION: Node Tree Hub (00:00 in Video) -->
+    <!-- ============================================ -->
+    <section class="pt-32 pb-20 md:pt-36 md:pb-28 px-4 sm:px-6 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto bg-white rounded-[36px] border border-slate-200/80 shadow-soft px-4 sm:px-10 py-12 md:py-16 relative overflow-hidden">
+            
+            <!-- Subtle Background Radial Glow -->
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[320px] bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Interactive Node Diagram Container -->
+            <div class="relative max-w-4xl mx-auto h-[260px] sm:h-[320px] mb-6 flex items-center justify-center">
+                
+                <!-- SVG Connector Lines (Desktop & Tablet) -->
+                <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 900 320" fill="none" preserveAspectRatio="xMidYMid meet">
+                    <!-- Left Branches -->
+                    <path d="M 450 160 L 310 160 L 250 70 L 195 70" stroke="#E2E8F0" stroke-width="2" stroke-linecap="round" />
+                    <path d="M 450 160 L 310 160 L 250 70 L 195 70" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" class="node-line" />
+                    
+                    <path d="M 450 160 L 130 160" stroke="#E2E8F0" stroke-width="2" stroke-linecap="round" />
+                    <path d="M 450 160 L 130 160" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" class="node-line" />
+
+                    <path d="M 450 160 L 310 160 L 250 250 L 210 250" stroke="#E2E8F0" stroke-width="2" stroke-linecap="round" />
+                    <path d="M 450 160 L 310 160 L 250 250 L 210 250" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" class="node-line" />
+
+                    <!-- Right Branches -->
+                    <path d="M 450 160 L 590 160 L 650 70 L 695 70" stroke="#E2E8F0" stroke-width="2" stroke-linecap="round" />
+                    <path d="M 450 160 L 590 160 L 650 70 L 695 70" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" class="node-line" />
+
+                    <path d="M 450 160 L 770 160" stroke="#E2E8F0" stroke-width="2" stroke-linecap="round" />
+                    <path d="M 450 160 L 770 160" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" class="node-line" />
+
+                    <path d="M 450 160 L 590 160 L 650 250 L 700 250" stroke="#E2E8F0" stroke-width="2" stroke-linecap="round" />
+                    <path d="M 450 160 L 590 160 L 650 250 L 700 250" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" class="node-line" />
+                </svg>
+
+                <!-- LEFT NODES -->
+                <!-- Top Left: Yellow 3D Icon (DGM + DCS Kernel) -->
+                <div class="absolute left-[12%] sm:left-[16%] top-[8%] float-slow z-10">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl icon-3d-amber flex items-center justify-center text-white" title="Dual-Kernel DGM + DCS">
+                        <i class="ph-fill ph-lightbulb-filament text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- Mid Left: CAD Preview Card -->
+                <div class="absolute left-[2%] sm:left-[5%] top-1/2 -translate-y-1/2 float-med z-10">
+                    <div class="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl bg-white p-1.5 shadow-lg border border-slate-200/90 overflow-hidden group">
+                        <img src="assets/core modeling modules/part.jpg" alt="3D Part" class="w-full h-full object-cover rounded-xl group-hover:scale-110 transition duration-500" />
+                    </div>
+                </div>
+
+                <!-- Bottom Left: Blue 3D Icon (Cloud Native) -->
+                <div class="absolute left-[14%] sm:left-[18%] bottom-[8%] float-fast z-10">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl icon-3d-sky flex items-center justify-center text-white" title="Cloud-Native Browser CAD">
+                        <i class="ph-fill ph-cloud-check text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- CENTER MAIN HUB ICON (3D Glossy Squircle) -->
+                <div class="relative z-20 flex flex-col items-center">
+                    <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-[28px] icon-3d-blue flex items-center justify-center text-white transform hover:scale-105 transition duration-300 cursor-pointer">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white/40 flex items-center justify-center">
+                            <i class="ph-bold ph-cube-transparent text-3xl sm:text-4xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT NODES -->
+                <!-- Top Right: Coral 3D Icon (Enterprise Security) -->
+                <div class="absolute right-[12%] sm:right-[16%] top-[8%] float-med z-10">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl icon-3d-rose flex items-center justify-center text-white" title="Keamanan ISO 27001">
+                        <i class="ph-fill ph-shield-check text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- Mid Right: Interactive Eyes / Co-Authoring Badge -->
+                <div class="absolute right-[2%] sm:right-[6%] top-1/2 -translate-y-1/2 float-slow z-10">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white shadow-lg border border-slate-200/80 flex flex-col items-center justify-center gap-1">
+                        <span class="text-xl sm:text-2xl leading-none">👀</span>
+                        <span class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Live Sync</span>
+                    </div>
+                </div>
+
+                <!-- Bottom Right: Assembly Preview Card -->
+                <div class="absolute right-[13%] sm:right-[17%] bottom-[8%] float-fast z-10">
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white p-1.5 shadow-lg border border-slate-200/90 overflow-hidden group">
+                        <img src="assets/core modeling modules/assembly.jpg" alt="Assembly" class="w-full h-full object-cover rounded-xl group-hover:scale-110 transition duration-500" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Typography & CTA -->
+            <div class="text-center max-w-3xl mx-auto relative z-10 reveal-up">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-5 bg-blue-50 border border-blue-200/60">
+                    <i class="ph-fill ph-crown text-amber-500 text-sm"></i>
+                    <span class="text-[11px] font-bold tracking-widest uppercase text-blue-700">Solusi CAD Cloud-Native • Masa Depan CAD Indonesia</span>
+                </div>
+
+                <h1 class="text-4xl sm:text-6xl md:text-[64px] font-extrabold tracking-tight text-slate-900 leading-[1.08] mb-5">
+                    Platform CAD 3D <br />
+                    <span class="serif-accent font-normal text-5xl sm:text-7xl text-blue-600">Cloud-Native Indonesia</span>
+                </h1>
+
+                <p class="max-w-xl mx-auto text-sm sm:text-base text-slate-500 leading-relaxed mb-8">
+                    Platform desain 3D berbasis browser dengan kolaborasi real-time, dual-kernel modeling buatan dalam negeri (DGM + DCS), dan kontrol versi cerdas untuk manufaktur modern.
+                </p>
+
+                <div class="flex flex-wrap justify-center gap-3.5">
+                    <a href="#daftar" class="px-8 py-4 rounded-full font-bold text-sm shadow-glow-blue hover:scale-105 transition flex items-center gap-2 text-white" style="background: linear-gradient(135deg, #2563EB 0%, #0284C7 100%);">
+                        <span>Daftar Gratis</span>
+                        <i class="ph-bold ph-caret-right"></i>
+                    </a>
+                    <a href="#demo" class="px-7 py-4 rounded-full font-semibold text-sm bg-slate-100 hover:bg-slate-200/80 text-slate-800 transition flex items-center gap-2">
+                        <i class="ph-fill ph-chats-circle text-lg text-blue-600"></i>
+                        <span>Minta Penawaran</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- SECTION 2: EXPANDING FLOATING GALLERY (00:01 - 00:03)      -->
+    <!-- ========================================================== -->
+    <section class="py-20 px-4 sm:px-6 overflow-hidden">
+        <div id="scatter-stage" class="scatter-stage max-w-6xl mx-auto bg-white rounded-[36px] border border-slate-200/80 shadow-soft px-6 py-20 md:py-28 relative min-h-[540px] flex items-center justify-center">
+            
+            <!-- Floating Module Thumbnails Left & Right (Desktop) -->
+            <!-- Left Column 1 (Outer) -->
+            <div class="hidden lg:flex flex-col gap-6 absolute left-6 top-1/2 -translate-y-1/2 z-10">
+                <div class="scatter-item w-36 h-44 rounded-2xl bg-slate-50 p-2 shadow-card border border-slate-200/80 flex flex-col justify-between" style="--init-x: 320px; --init-y: 80px;">
+                    <img src="assets/core modeling modules/sketch.jpg" alt="Sketching" class="w-full h-32 object-contain rounded-xl bg-white p-1" />
+                    <span class="text-[11px] font-bold text-slate-700 text-center pb-1">2D Sketching</span>
+                </div>
+                <div class="scatter-item w-36 h-44 rounded-2xl bg-slate-50 p-2 shadow-card border border-slate-200/80 flex flex-col justify-between" style="--init-x: 320px; --init-y: -80px;">
+                    <img src="assets/professional modules/sheet-metal-module.jpg" alt="Sheet Metal" class="w-full h-32 object-contain rounded-xl bg-white p-1" />
+                    <span class="text-[11px] font-bold text-slate-700 text-center pb-1">Sheet Metal</span>
+                </div>
+            </div>
+
+            <!-- Left Column 2 (Inner) -->
+            <div class="hidden lg:flex flex-col gap-6 absolute left-48 top-1/2 -translate-y-1/2 z-10 mt-8">
+                <div class="scatter-item w-40 h-48 rounded-2xl bg-slate-50 p-2.5 shadow-lg border border-slate-200/90 flex flex-col justify-between" style="--init-x: 180px; --init-y: 60px;">
+                    <img src="assets/core modeling modules/part.jpg" alt="Part Design" class="w-full h-36 object-contain rounded-xl bg-white p-1" />
+                    <span class="text-xs font-bold text-slate-800 text-center pb-1">Part Modeling</span>
+                </div>
+                <div class="scatter-item w-40 h-48 rounded-2xl bg-slate-50 p-2.5 shadow-lg border border-slate-200/90 flex flex-col justify-between" style="--init-x: 180px; --init-y: -60px;">
+                    <img src="assets/core modeling modules/drawing.jpg" alt="Drawing" class="w-full h-36 object-contain rounded-xl bg-white p-1" />
+                    <span class="text-xs font-bold text-slate-800 text-center pb-1">2D/3D Drawing</span>
+                </div>
+            </div>
+
+            <!-- Right Column 2 (Inner) -->
+            <div class="hidden lg:flex flex-col gap-6 absolute right-48 top-1/2 -translate-y-1/2 z-10 -mt-6">
+                <div class="scatter-item w-40 h-48 rounded-2xl bg-slate-50 p-2.5 shadow-lg border border-slate-200/90 flex flex-col justify-between" style="--init-x: -180px; --init-y: 60px;">
+                    <img src="assets/core modeling modules/assembly.jpg" alt="Assembly" class="w-full h-36 object-contain rounded-xl bg-white p-1" />
+                    <span class="text-xs font-bold text-slate-800 text-center pb-1">300K+ Assembly</span>
+                </div>
+                <div class="scatter-item w-40 h-48 rounded-2xl bg-slate-50 p-2.5 shadow-lg border border-slate-200/90 flex flex-col justify-between" style="--init-x: -180px; --init-y: -60px;">
+                    <img src="assets/professional modules/weldment-module.jpg" alt="Weldment" class="w-full h-36 object-contain rounded-xl bg-white p-1" />
+                    <span class="text-xs font-bold text-slate-800 text-center pb-1">Weldment</span>
+                </div>
+            </div>
+
+            <!-- Right Column 1 (Outer) -->
+            <div class="hidden lg:flex flex-col gap-6 absolute right-6 top-1/2 -translate-y-1/2 z-10">
+                <div class="scatter-item w-36 h-44 rounded-2xl bg-slate-50 p-2 shadow-card border border-slate-200/80 flex flex-col justify-between" style="--init-x: -320px; --init-y: 80px;">
+                    <img src="assets/professional modules/mbd.jpg" alt="MBD" class="w-full h-32 object-contain rounded-xl bg-white p-1" />
+                    <span class="text-[11px] font-bold text-slate-700 text-center pb-1">3D MBD PMI</span>
+                </div>
+                <div class="scatter-item w-36 h-44 rounded-2xl bg-slate-50 p-2 shadow-card border border-slate-200/80 flex flex-col justify-between" style="--init-x: -320px; --init-y: -80px;">
+                    <img src="assets/collaboration & management/version-management.png" alt="Version Control" class="w-full h-32 object-contain rounded-xl bg-white p-1" />
+                    <span class="text-[11px] font-bold text-slate-700 text-center pb-1">Version Tree</span>
+                </div>
+            </div>
+
+            <!-- Center Content -->
+            <div class="max-w-md mx-auto text-center relative z-20">
+                <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <i class="ph-fill ph-stack text-2xl"></i>
+                </div>
+                <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight mb-4">
+                    Solusi Inti <br />
+                    <span class="serif-accent font-normal text-4xl sm:text-6xl text-blue-600">Rekayasa 3D</span>
+                </h2>
+                <p class="text-sm sm:text-base text-slate-500 leading-relaxed mb-7">
+                    Sederhanakan seluruh proses desain mekanikal dalam satu platform terpusat, meningkatkan transparansi tim dari sketsa hingga produksi.
+                </p>
+                <a href="#produk" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 shadow-md hover:scale-105 transition">
+                    <span>Jelajahi Modul</span>
+                    <i class="ph-bold ph-arrow-down-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- SECTION 3: BENTO GRID - MENGAPA CROWNCAD (00:04 - 00:06)   -->
+    <!-- ========================================================== -->
+    <section id="mengapa" class="py-20 px-4 sm:px-6 max-w-6xl mx-auto">
+        <div class="text-center mb-14 reveal-up">
+            <div class="text-[11px] font-bold uppercase tracking-widest mb-2 flex items-center justify-center gap-1.5 text-blue-600">
+                <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                <span>Mengapa CrownCAD? • Keunggulan Platform</span>
+            </div>
+            <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 mb-3">
+                Dirancang untuk Seluruh <span class="serif-accent font-normal text-4xl sm:text-6xl text-blue-600">Tim Engineering</span>
+            </h2>
+            <p class="text-sm sm:text-base text-slate-500 max-w-xl mx-auto">
+                Ribuan engineer, dari studio desain produk hingga industri manufaktur berskala besar, mengandalkan CrownCAD setiap hari.
+            </p>
+        </div>
+
+        <!-- 3 Top Cards + 2 Bottom Wide Cards Bento Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            
+            <!-- Bento 1: Arsitektur Cloud-Native (Interactive Chart Mockup) -->
+            <div class="bg-white rounded-[28px] p-7 border border-slate-200/80 shadow-card hover:shadow-xl transition flex flex-col justify-between reveal-up">
+                <div class="h-44 rounded-2xl bg-slate-50 border border-slate-100 p-4 mb-6 flex flex-col justify-between relative overflow-hidden">
+                    <div class="flex items-center justify-between text-[11px] font-bold text-slate-500">
+                        <span>Cloud Resource Load</span>
+                        <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Auto-Scale</span>
+                    </div>
+                    <!-- Animated Bar Chart -->
+                    <div class="flex items-end justify-between gap-2 h-24 pt-4 px-2">
+                        <div class="w-full bg-slate-200 rounded-t-lg h-[40%]"></div>
+                        <div class="w-full bg-slate-200 rounded-t-lg h-[60%]"></div>
+                        <div class="w-full bg-blue-600 rounded-t-lg h-[92%] relative group">
+                            <span class="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">99.9%</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-t-lg h-[55%]"></div>
+                        <div class="w-full bg-amber-400 rounded-t-lg h-[75%]"></div>
+                        <div class="w-full bg-slate-200 rounded-t-lg h-[45%]"></div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Arsitektur Cloud-Native</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">Tidak perlu instalasi. Akses langsung dari browser, data aman di cloud, auto-update tanpa downtime.</p>
+                </div>
+            </div>
+
+            <!-- Bento 2: Ringan & Performa Tinggi (Cycling Pill Widget like 00:05) -->
+            <div class="bg-white rounded-[28px] p-7 border border-slate-200/80 shadow-card hover:shadow-xl transition flex flex-col justify-between reveal-up delay-100">
+                <div class="h-44 rounded-2xl bg-slate-50 border border-slate-100 p-4 mb-6 flex items-center justify-center relative overflow-hidden">
+                    <!-- Decorative Rings -->
+                    <div class="absolute w-48 h-48 rounded-full border border-slate-200/60"></div>
+                    <div class="absolute w-32 h-32 rounded-full border border-slate-200/80"></div>
+                    
+                    <!-- Cycling Pill Button -->
+                    <div id="bento-pill" class="insight-pill relative z-10 bg-white px-4 py-2.5 rounded-full shadow-md border border-slate-200/80 flex items-center gap-3">
+                        <span id="bento-pill-icon" class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-sm shadow-sm">
+                            <i class="ph-bold ph-lightning"></i>
+                        </span>
+                        <span id="bento-pill-text" class="text-xs font-bold text-slate-800 pr-2">Dual-Kernel DGM + DCS</span>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Ringan & Performa Tinggi</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">Dual-kernel DGM + DCS mandiri. WebGL rendering berkecepatan tinggi, sanggup menangani 300K+ parts.</p>
+                </div>
+            </div>
+
+            <!-- Bento 3: Library Model Parametrik -->
+            <div class="bg-white rounded-[28px] p-7 border border-slate-200/80 shadow-card hover:shadow-xl transition flex flex-col justify-between reveal-up delay-200">
+                <div class="h-44 rounded-2xl bg-slate-50 border border-slate-100 p-4 mb-6 flex items-center justify-center relative overflow-hidden">
+                    <!-- Stacked Folder Card UI -->
+                    <div class="w-28 h-24 rounded-2xl bg-amber-100/70 border border-amber-200 absolute -rotate-6 scale-95"></div>
+                    <div class="w-28 h-24 rounded-2xl bg-blue-600 text-white shadow-lg flex flex-col items-center justify-center gap-1 relative z-10 rotate-3 hover:rotate-0 transition">
+                        <i class="ph-fill ph-database text-3xl"></i>
+                        <span class="text-[10px] font-bold tracking-wider uppercase text-blue-100">ISO / GB Std</span>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Library Model Parametrik</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">Template standar GB/ISO lengkap, parts library industri Indonesia, serta material database terintegrasi.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom 2 Cards (2/3 Wide + 1/3 Orbiting Avatars) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Bento 4 (Wide): Semua Data Proyek & BOM Terpusat + Live Metrics -->
+            <div class="lg:col-span-2 bg-white rounded-[28px] p-7 sm:p-8 border border-slate-200/80 shadow-card hover:shadow-xl transition flex flex-col justify-between reveal-up">
+                <div class="grid sm:grid-cols-2 gap-4 bg-slate-50 rounded-2xl p-4 border border-slate-100 mb-6">
+                    <!-- Mini Project Tree Mockup -->
+                    <div class="bg-white rounded-xl p-3.5 border border-slate-200/70 shadow-sm">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-800 pb-2.5 mb-2.5 border-b border-slate-100">
+                            <span>Assembly Tree (BOM)</span>
+                            <span class="text-[10px] text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Synced</span>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex items-center justify-between p-1.5 rounded-lg bg-slate-50">
+                                <span class="flex items-center gap-2 font-semibold text-slate-700"><i class="ph-fill ph-cube text-blue-600"></i> Chasis_Main_v4.ccad</span>
+                                <span class="text-[10px] font-bold text-emerald-600">Approved</span>
+                            </div>
+                            <div class="flex items-center justify-between p-1.5 rounded-lg">
+                                <span class="flex items-center gap-2 font-medium text-slate-600"><i class="ph-fill ph-gear text-amber-500"></i> Gearbox_SubAssy</span>
+                                <span class="text-[10px] text-slate-400">Editing...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live SLA Counter Widget -->
+                    <div class="bg-white rounded-xl p-3.5 border border-slate-200/70 shadow-sm flex flex-col justify-center">
+                        <div class="grid grid-cols-2 gap-3 text-center">
+                            <div class="p-2 rounded-lg bg-slate-50">
+                                <div class="text-xl font-extrabold text-blue-600 counter" data-target="99.9" data-suffix="%">0%</div>
+                                <div class="text-[10px] font-semibold text-slate-500">Uptime SLA</div>
+                            </div>
+                            <div class="p-2 rounded-lg bg-slate-50">
+                                <div class="text-xl font-extrabold text-blue-600 counter" data-target="100" data-prefix="<" data-suffix="ms">0ms</div>
+                                <div class="text-[10px] font-semibold text-slate-500">Response Time</div>
+                            </div>
+                            <div class="p-2 rounded-lg bg-slate-50">
+                                <div class="text-xl font-extrabold text-blue-600 counter" data-target="300000" data-suffix="+">0+</div>
+                                <div class="text-[10px] font-semibold text-slate-500">Parts Handling</div>
+                            </div>
+                            <div class="p-2 rounded-lg bg-slate-50">
+                                <div class="text-xl font-extrabold text-blue-600 counter" data-target="24" data-suffix="/7">0/7</div>
+                                <div class="text-[10px] font-semibold text-slate-500">Support Lokal</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Seluruh Data Desain & Kontrol Versi dalam Satu Layar</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">Lacak riwayat revisi 3D, percabangan desain (branching), manajemen BOM, dan izin akses granular secara instan tanpa duplikasi file lokal.</p>
+                </div>
+            </div>
+
+            <!-- Bento 5: Kolaborasi Multi-Platform (Circular Team Ring like 00:06) -->
+            <div class="bg-white rounded-[28px] p-7 border border-slate-200/80 shadow-card hover:shadow-xl transition flex flex-col justify-between reveal-up delay-100">
+                <div class="h-48 rounded-2xl bg-slate-50 border border-slate-100 mb-6 flex items-center justify-center relative overflow-hidden">
+                    <div class="w-36 h-36 rounded-full border border-dashed border-slate-300 flex items-center justify-center relative animate-[spin_40s_linear_infinite]">
+                        <span class="w-9 h-9 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center absolute -top-4 shadow">ENG</span>
+                        <span class="w-9 h-9 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center absolute -bottom-4 shadow">QA</span>
+                        <span class="w-9 h-9 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center absolute -left-4 shadow">CAM</span>
+                        <span class="w-9 h-9 rounded-full bg-purple-600 text-white text-xs font-bold flex items-center justify-center absolute -right-4 shadow">PM</span>
+                    </div>
+                    <div class="absolute w-14 h-14 rounded-2xl bg-white shadow-md border border-slate-100 flex items-center justify-center text-blue-600">
+                        <i class="ph-fill ph-users-three text-2xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Kolaborasi Multi-Platform</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">Co-authoring simultan, 3D markup, anotasi review, dan approval workflow lintas PC, tablet, maupun smartphone.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- SECTION 4: CORE CAPABILITIES (MODUL LENGKAP + TABS)        -->
+    <!-- ========================================================== -->
+    <section id="produk" class="py-20 px-4 sm:px-6">
+        <div class="max-w-7xl mx-auto bg-white rounded-[36px] border border-slate-200/80 shadow-soft p-6 sm:p-12">
+            <!-- Header -->
+            <div class="text-center mb-10 reveal-up">
+                <div class="text-[11px] font-bold uppercase tracking-widest mb-2 flex items-center justify-center gap-1.5 text-blue-600">
+                    <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                    <span>Modul Lengkap • Alur Kerja CAD Modern</span>
+                </div>
+                <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 mb-4">
+                    Core Capabilities: <span class="serif-accent font-normal text-4xl sm:text-6xl text-blue-600">Powering Your CAD Workflow</span>
+                </h2>
+
+                <div class="text-xs sm:text-sm text-slate-500 max-w-4xl mx-auto space-y-1 font-medium">
+                    <p class="flex flex-wrap justify-center items-center gap-x-3 gap-y-1">
+                        <span>• Data compatibility and collaboration</span>
+                        <span>• Part design</span>
+                        <span>• Assembly design</span>
+                        <span>• Drawing design</span>
+                    </p>
+                    <p class="flex flex-wrap justify-center items-center gap-x-3 gap-y-1 text-slate-400">
+                        <span>• Multi-user collaborative design</span>
+                        <span>• Version management</span>
+                        <span>• Team coordination tools</span>
+                        <span>• Secure project sharing</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tab Switcher dengan Oval Slider -->
+            <div class="flex justify-center mb-12 overflow-x-auto no-scrollbar">
+                <div class="relative inline-flex bg-slate-100 rounded-full p-1.5 gap-1.5">
+                    <div id="tab-slider" class="absolute top-1.5 h-[calc(100%-0.75rem)] bg-slate-900 rounded-full transition-all duration-300 ease-out shadow-md"></div>
+                    
+                    <button id="tab-btn-core" onclick="switchCapTab('core')" class="relative z-10 py-2.5 px-5 text-xs sm:text-sm font-bold transition-colors duration-300 whitespace-nowrap rounded-full text-white">
+                        Core Modeling Module
+                    </button>
+                    <button id="tab-btn-pro" onclick="switchCapTab('pro')" class="relative z-10 py-2.5 px-5 text-xs sm:text-sm font-medium transition-colors duration-300 whitespace-nowrap rounded-full text-slate-700">
+                        Professional Modules
+                    </button>
+                    <button id="tab-btn-collab" onclick="switchCapTab('collab')" class="relative z-10 py-2.5 px-5 text-xs sm:text-sm font-medium transition-colors duration-300 whitespace-nowrap rounded-full text-slate-700">
+                        Collaboration & Management
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 1: Core Modeling Module -->
+            <div id="tab-panel-core" class="relative group">
+                <button onclick="slideCards('core', -1)" aria-label="Previous" class="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white shadow-lg border border-slate-200 text-slate-800 hover:bg-slate-900 hover:text-white transition flex items-center justify-center">
+                    <i class="ph-bold ph-caret-left text-lg"></i>
+                </button>
+                <button onclick="slideCards('core', 1)" aria-label="Next" class="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white shadow-lg border border-slate-200 text-slate-800 hover:bg-slate-900 hover:text-white transition flex items-center justify-center">
+                    <i class="ph-bold ph-caret-right text-lg"></i>
+                </button>
+
+                <div id="slider-core" class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar py-2 px-1">
+                    <!-- Card 1: Sketching -->
+                    <div class="cap-card flex-none w-[85vw] sm:w-[350px] lg:w-[calc(33.333%-1rem)] snap-start bg-slate-50/70 rounded-3xl border border-slate-200/80 overflow-hidden hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="h-56 bg-white p-5 m-2 rounded-2xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                            <img src="assets/core modeling modules/sketch.jpg" alt="Sketching" class="max-h-full max-w-full object-contain" />
+                        </div>
+                        <div class="p-6 pt-4 flex flex-col flex-1">
+                            <h3 class="text-lg font-bold text-slate-900 mb-3">Sketching</h3>
+                            <ul class="space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Supports the creation of polylines, arcs curves, slots, and more.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Enables quick dimensioning and geometric constraints.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Provides editing tools for fillets chamfers, trimming, offsetting, and more.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Includes inspection and repair functions.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Part Design -->
+                    <div class="cap-card flex-none w-[85vw] sm:w-[350px] lg:w-[calc(33.333%-1rem)] snap-start bg-slate-50/70 rounded-3xl border border-slate-200/80 overflow-hidden hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="h-56 bg-white p-5 m-2 rounded-2xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                            <img src="assets/core modeling modules/part.jpg" alt="Part Design" class="max-h-full max-w-full object-contain" />
+                        </div>
+                        <div class="p-6 pt-4 flex flex-col flex-1">
+                            <h3 class="text-lg font-bold text-slate-900 mb-3">Part Design</h3>
+                            <ul class="space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Supports complex curve/surface geometric modeling.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Offers feature-based parametric solid modeling.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Allows direct modeling for both parametric and non-parametric models.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Delivers powerful hybrid surface/mesh modeling capabilities.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Assembly Design -->
+                    <div class="cap-card flex-none w-[85vw] sm:w-[350px] lg:w-[calc(33.333%-1rem)] snap-start bg-slate-50/70 rounded-3xl border border-slate-200/80 overflow-hidden hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="h-56 bg-white p-5 m-2 rounded-2xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                            <img src="assets/core modeling modules/assembly.jpg" alt="Assembly Design" class="max-h-full max-w-full object-contain" />
+                        </div>
+                        <div class="p-6 pt-4 flex flex-col flex-1">
+                            <h3 class="text-lg font-bold text-slate-900 mb-3">Assembly Design</h3>
+                            <ul class="space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Supports both top-down and bottom-up assembly design.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Enables efficient component mating.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Ensures real-time synchronization between assemblies and parts.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Provides interference checks between components.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Drawing -->
+                    <div class="cap-card flex-none w-[85vw] sm:w-[350px] lg:w-[calc(33.333%-1rem)] snap-start bg-slate-50/70 rounded-3xl border border-slate-200/80 overflow-hidden hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="h-56 bg-white p-5 m-2 rounded-2xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                            <img src="assets/core modeling modules/drawing.jpg" alt="Drawing" class="max-h-full max-w-full object-contain" />
+                        </div>
+                        <div class="p-6 pt-4 flex flex-col flex-1">
+                            <h3 class="text-lg font-bold text-slate-900 mb-3">Drawing</h3>
+                            <ul class="space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Automatically generates projection views from 3D models.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Offers international standard-compliant drafting methods.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Supports automatic dimensioning.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Maintains synchronization between 2D and 3D models.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Data Compatibility -->
+                    <div class="cap-card flex-none w-[85vw] sm:w-[350px] lg:w-[calc(33.333%-1rem)] snap-start bg-slate-50/70 rounded-3xl border border-slate-200/80 overflow-hidden hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="h-56 bg-white p-5 m-2 rounded-2xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                            <img src="assets/core modeling modules/compatibility.jpg" alt="Data Compatibility" class="max-h-full max-w-full object-contain" />
+                        </div>
+                        <div class="p-6 pt-4 flex flex-col flex-1">
+                            <h3 class="text-lg font-bold text-slate-900 mb-3">Data Compatibility</h3>
+                            <ul class="space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Imports standard formats such as IGES, STEP, and Parasolid.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Directly reads models from CATIA, NX (UG), Creo, SOLIDWORKS, Inventor, Revit, AutoCAD, and more.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Exports models to IGES, STEP, CATIA, NX (UG), SOLIDWORKS, AutoCAD, STL, and more.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Professional Modules -->
+            <div id="tab-panel-pro" class="relative group hidden">
+                <button onclick="slideCards('pro', -1)" aria-label="Previous" class="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white shadow-lg border border-slate-200 text-slate-800 hover:bg-slate-900 hover:text-white transition flex items-center justify-center">
+                    <i class="ph-bold ph-caret-left text-lg"></i>
+                </button>
+                <button onclick="slideCards('pro', 1)" aria-label="Next" class="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white shadow-lg border border-slate-200 text-slate-800 hover:bg-slate-900 hover:text-white transition flex items-center justify-center">
+                    <i class="ph-bold ph-caret-right text-lg"></i>
+                </button>
+
+                <div id="slider-pro" class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar py-2 px-1">
+                    <!-- Sheet Metal -->
+                    <div class="cap-card flex-none w-[85vw] sm:w-[350px] lg:w-[calc(33.333%-1rem)] snap-start bg-slate-50/70 rounded-3xl border border-slate-200/80 overflow-hidden hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="h-56 bg-white p-5 m-2 rounded-2xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                            <img src="assets/professional modules/sheet-metal-module.jpg" alt="Sheet Metal Module" class="max-h-full max-w-full object-contain" />
+                        </div>
+                        <div class="p-6 pt-4 flex flex-col flex-1">
+                            <h3 class="text-lg font-bold text-slate-900 mb-3">Sheet Metal Module</h3>
+                            <ul class="space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Provides basic sheet metal features (e.g., louvers, stamping).</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Supports rapid unfolding and folding to streamline design-to-production workflows.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Weldment -->
+                    <div class="cap-card flex-none w-[85vw] sm:w-[350px] lg:w-[calc(33.333%-1rem)] snap-start bg-slate-50/70 rounded-3xl border border-slate-200/80 overflow-hidden hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="h-56 bg-white p-5 m-2 rounded-2xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                            <img src="assets/professional modules/weldment-module.jpg" alt="Weldment Module" class="max-h-full max-w-full object-contain" />
+                        </div>
+                        <div class="p-6 pt-4 flex flex-col flex-1">
+                            <h3 class="text-lg font-bold text-slate-900 mb-3">Weldment Module</h3>
+                            <ul class="space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Offers a library of standard structural profiles.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Enables quick creation of 2D and 3D sketch paths.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Allows fast modification of corner connection styles.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Supports exporting weldment cut lists.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- MBD -->
+                    <div class="cap-card flex-none w-[85vw] sm:w-[350px] lg:w-[calc(33.333%-1rem)] snap-start bg-slate-50/70 rounded-3xl border border-slate-200/80 overflow-hidden hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="h-56 bg-white p-5 m-2 rounded-2xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                            <img src="assets/professional modules/mbd.jpg" alt="MBD" class="max-h-full max-w-full object-contain" />
+                        </div>
+                        <div class="p-6 pt-4 flex flex-col flex-1">
+                            <h3 class="text-lg font-bold text-slate-900 mb-3">MBD</h3>
+                            <ul class="space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Enables direct 3D annotations and notes for seamless communication between users and manufacturers.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Supports transferring PMI (Product Manufacturing Information) to 2D drawings to boost drafting efficiency.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Reads and imports MBD data from external models for collaborative design.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Animation -->
+                    <div class="cap-card flex-none w-[85vw] sm:w-[350px] lg:w-[calc(33.333%-1rem)] snap-start bg-slate-50/70 rounded-3xl border border-slate-200/80 overflow-hidden hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="h-56 bg-white p-5 m-2 rounded-2xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                            <img src="assets/professional modules/animation.png" alt="Animation" class="max-h-full max-w-full object-contain" />
+                        </div>
+                        <div class="p-6 pt-4 flex flex-col flex-1">
+                            <h3 class="text-lg font-bold text-slate-900 mb-3">Animation</h3>
+                            <ul class="space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Realistically simulates mechanism motion based on assembly mating relationships.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Allows users to define motion states freely via time-based keyframes.</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>Supports AVI/MP4 video output to show mechanism & speed up decisions.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: Collaboration & Management -->
+            <div id="tab-panel-collab" class="hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-slate-50/70 rounded-3xl border border-slate-200/80 overflow-hidden hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="h-64 bg-white p-6 m-2.5 rounded-2xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                            <img src="assets/collaboration & management/version-management.png" alt="Version Management" class="max-h-full max-w-full object-contain" />
+                        </div>
+                        <div class="p-8 pt-4 flex flex-col flex-1">
+                            <h3 class="text-xl font-bold text-slate-900 mb-3">Version Management</h3>
+                            <ul class="space-y-2.5 text-sm text-slate-600 leading-relaxed">
+                                <li class="flex items-start gap-2.5"><span class="text-blue-600 font-bold">•</span><span>Ensures data security through encrypted cloud storage and transmission.</span></li>
+                                <li class="flex items-start gap-2.5"><span class="text-blue-600 font-bold">•</span><span>Tracks complete model editing history, allowing users to roll back to any historical version for editing.</span></li>
+                                <li class="flex items-start gap-2.5"><span class="text-blue-600 font-bold">•</span><span>Implements version control via version nodes and branches, simplifying design reviews.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50/70 rounded-3xl border border-slate-200/80 overflow-hidden hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="h-64 bg-white p-6 m-2.5 rounded-2xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                            <img src="assets/collaboration & management/collaboration.png" alt="Collaboration" class="max-h-full max-w-full object-contain" />
+                        </div>
+                        <div class="p-8 pt-4 flex flex-col flex-1">
+                            <h3 class="text-xl font-bold text-slate-900 mb-3">Collaboration</h3>
+                            <ul class="space-y-2.5 text-sm text-slate-600 leading-relaxed">
+                                <li class="flex items-start gap-2.5"><span class="text-blue-600 font-bold">•</span><span><strong>Cloud-Powered Collaboration:</strong> Innovation, security, and efficiency across devices.</span></li>
+                                <li class="flex items-start gap-2.5"><span class="text-blue-600 font-bold">•</span><span><strong>Team Collaboration:</strong> Streamlined teamwork via team creation.</span></li>
+                                <li class="flex items-start gap-2.5"><span class="text-blue-600 font-bold">•</span><span><strong>Secure Collaboration:</strong> Strict permission controls and versioning to protect data integrity.</span></li>
+                                <li class="flex items-start gap-2.5"><span class="text-blue-600 font-bold">•</span><span><strong>Cross-platform Collaboration:</strong> Seamless design and review across PCs, smartphones, tablets, and smart displays.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- SECTION 5: ROTATING ARC WHEEL INTEGRATIONS (00:07 - 00:10) -->
+    <!-- ========================================================== -->
+    <section id="kompatibilitas" class="py-20 px-4 sm:px-6 overflow-hidden">
+        <div class="max-w-5xl mx-auto bg-white rounded-[36px] border border-slate-200/80 shadow-soft px-6 py-16 sm:py-20 text-center relative overflow-hidden">
+            
+            <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center mx-auto mb-5 shadow-sm">
+                <i class="ph-bold ph-arrows-left-right text-xl"></i>
+            </div>
+
+            <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight mb-3">
+                Integrasi dengan Format <br />
+                <span class="serif-accent font-normal text-4xl sm:text-6xl text-blue-600">CAD Anda dalam Hitungan Detik</span>
+            </h2>
+            <p class="text-sm sm:text-base text-slate-500 max-w-lg mx-auto mb-12">
+                Klik atau biarkan berputar untuk melihat kompatibilitas baca/ekspor langsung tanpa kehilangan geometri.
+            </p>
+
+            <!-- Arc Wheel Stage -->
+            <div class="relative h-[220px] sm:h-[250px] flex items-center justify-center mb-6 select-none">
+                <!-- 5 Arc Cards dynamically positioned by JS -->
+                <div class="arc-card absolute w-28 h-28 sm:w-36 sm:h-36 rounded-[28px] bg-white border border-slate-200 shadow-lg flex flex-col items-center justify-center p-4" onclick="selectArcItem(0)">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl font-extrabold mb-2 shadow">SW</div>
+                    <span class="text-xs font-bold text-slate-700">SOLIDWORKS</span>
+                </div>
+
+                <div class="arc-card absolute w-28 h-28 sm:w-36 sm:h-36 rounded-[28px] bg-white border border-slate-200 shadow-lg flex flex-col items-center justify-center p-4" onclick="selectArcItem(1)">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-2xl font-extrabold mb-2 shadow">CT</div>
+                    <span class="text-xs font-bold text-slate-700">CATIA V5/V6</span>
+                </div>
+
+                <div class="arc-card absolute w-28 h-28 sm:w-36 sm:h-36 rounded-[28px] bg-white border border-slate-200 shadow-lg flex flex-col items-center justify-center p-4" onclick="selectArcItem(2)">
+                    <div class="w-12 h-12 rounded-2xl bg-sky-500 text-white flex items-center justify-center text-2xl font-extrabold mb-2 shadow">NX</div>
+                    <span class="text-xs font-bold text-slate-700">Siemens NX</span>
+                </div>
+
+                <div class="arc-card absolute w-28 h-28 sm:w-36 sm:h-36 rounded-[28px] bg-white border border-slate-200 shadow-lg flex flex-col items-center justify-center p-4" onclick="selectArcItem(3)">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-2xl font-extrabold mb-2 shadow">CR</div>
+                    <span class="text-xs font-bold text-slate-700">PTC Creo</span>
+                </div>
+
+                <div class="arc-card absolute w-28 h-28 sm:w-36 sm:h-36 rounded-[28px] bg-white border border-slate-200 shadow-lg flex flex-col items-center justify-center p-4" onclick="selectArcItem(4)">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl font-extrabold mb-2 shadow">ST</div>
+                    <span class="text-xs font-bold text-slate-700">STEP & IGES</span>
+                </div>
+            </div>
+
+            <!-- Active Tool Caption -->
+            <div class="min-h-[64px] flex flex-col items-center justify-center">
+                <h3 id="arc-title" class="text-xl font-extrabold text-slate-900 transition-all duration-300">Siemens NX (UG)</h3>
+                <p id="arc-desc" class="text-sm text-slate-500 mt-1 transition-all duration-300">Baca & ekspor langsung file assembly dan part NX tanpa konversi perantara.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- SECTION 6: ENVELOPE UNFOLD & CAROUSEL (00:11 - 00:14)      -->
+    <!-- ========================================================== -->
+    <section id="solusi" class="py-20 px-4 sm:px-6 overflow-hidden">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12 reveal-up">
+                <div class="text-[11px] font-bold uppercase tracking-widest mb-2 text-blue-600">
+                    <span class="w-2 h-2 rounded-full bg-blue-600 inline-block mr-1.5"></span>
+                    Cloud Platform • Kolaborasi Real-Time
+                </div>
+                <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 mb-3">
+                    Bekerja dari <span class="serif-accent font-normal text-4xl sm:text-6xl text-blue-600">Mana Saja, Kapan Saja</span>
+                </h2>
+                <p class="text-sm sm:text-base text-slate-500 max-w-xl mx-auto">
+                    Platform cloud-native yang memungkinkan tim Anda berkolaborasi secara real-time dengan keamanan tingkat enterprise.
+                </p>
+            </div>
+
+            <!-- 3-Card Tilted Envelope Stage (00:11 - 00:14 style) -->
+            <div class="relative max-w-5xl mx-auto pt-8 pb-6">
+                
+                <!-- Decorative Envelope Pocket Behind Center Card -->
+                <div class="envelope-wrapper absolute left-1/2 -translate-x-1/2 bottom-16 w-[320px] sm:w-[390px] h-48 rounded-b-[32px] bg-gradient-to-b from-blue-100/80 to-blue-200/50 border border-blue-200/80 shadow-inner pointer-events-none z-0 flex items-end justify-center overflow-hidden">
+                    <div class="w-full h-24 bg-white/40 backdrop-blur-sm border-t border-white/60 transform -skew-y-6"></div>
+                </div>
+
+                <!-- 3-Card Carousel Stage -->
+                <div class="relative h-[430px] sm:h-[450px] flex items-center justify-center z-10">
+                    
+                    <!-- Slide 0: Multi-User Real-Time (cloud-1.jpg) -->
+                    <div class="review-card absolute w-[88vw] max-w-[360px] bg-white rounded-[28px] border border-slate-200/90 shadow-xl p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="h-44 rounded-2xl overflow-hidden mb-5 relative border border-slate-100">
+                                <img src="assets/cloud-1.jpg" alt="CrownCAD Cloud Collaboration" class="w-full h-full object-cover" />
+                                <span class="absolute top-3 left-3 px-3 py-1 rounded-full bg-blue-600/90 backdrop-blur-md text-white text-[10px] font-bold flex items-center gap-1.5">
+                                    <i class="ph-fill ph-users-three"></i> Multi-User Real-Time
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-center gap-1 text-amber-400 text-sm mb-2">
+                                <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
+                                <span class="text-xs font-bold text-slate-700 ml-1.5">5.0</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 text-center mb-2">Kolaborasi Tanpa Batas</h3>
+                            <p class="text-xs sm:text-sm text-slate-500 text-center leading-relaxed">
+                                "Tim engineering dapat bekerja pada model 3D yang sama secara bersamaan dari lokasi berbeda dengan sinkronisasi real-time."
+                            </p>
+                        </div>
+                        <div class="pt-4 mt-4 border-t border-slate-100 text-center text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                            Cloud Co-Authoring Engine
+                        </div>
+                    </div>
+
+                    <!-- Slide 1: Enterprise Security (cloud-2.jpg) -->
+                    <div class="review-card absolute w-[88vw] max-w-[360px] bg-white rounded-[28px] border border-slate-200/90 shadow-xl p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="h-44 rounded-2xl overflow-hidden mb-5 relative border border-slate-100">
+                                <img src="assets/cloud-2.jpg" alt="CrownCAD Cloud Architecture" class="w-full h-full object-cover" />
+                                <span class="absolute top-3 left-3 px-3 py-1 rounded-full bg-emerald-600/90 backdrop-blur-md text-white text-[10px] font-bold flex items-center gap-1.5">
+                                    <i class="ph-fill ph-lock-key"></i> Enterprise Security
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-center gap-1 text-amber-400 text-sm mb-2">
+                                <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
+                                <span class="text-xs font-bold text-slate-700 ml-1.5">ISO 27001</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 text-center mb-2">Keamanan Tingkat Enterprise</h3>
+                            <p class="text-xs sm:text-sm text-slate-500 text-center leading-relaxed">
+                                "Data desain terenkripsi penuh di cloud, dukungan SSO/SAML, RBAC granular, serta audit trail lengkap untuk perlindungan IP."
+                            </p>
+                        </div>
+                        <div class="pt-4 mt-4 border-t border-slate-100 text-center text-[11px] font-bold text-emerald-600 uppercase tracking-wider">
+                            Zero Local Footprint
+                        </div>
+                    </div>
+
+                    <!-- Slide 2: 10.000+ Perusahaan Manufaktur -->
+                    <div class="review-card absolute w-[88vw] max-w-[360px] bg-white rounded-[28px] border border-slate-200/90 shadow-xl p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="h-44 rounded-2xl overflow-hidden mb-5 relative border border-slate-100 bg-slate-50 p-3 flex items-center justify-center">
+                                <img src="assets/collaboration & management/collaboration.png" alt="Multi-device CAD" class="max-h-full max-w-full object-contain" />
+                                <span class="absolute top-3 left-3 px-3 py-1 rounded-full bg-slate-900/90 backdrop-blur-md text-white text-[10px] font-bold flex items-center gap-1.5">
+                                    <i class="ph-fill ph-devices"></i> Lintas Perangkat
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-center gap-1 text-amber-400 text-sm mb-2">
+                                <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
+                                <span class="text-xs font-bold text-slate-700 ml-1.5">10.000+ Tim</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 text-center mb-2">Review Desain Tanpa Hambatan</h3>
+                            <p class="text-xs sm:text-sm text-slate-500 text-center leading-relaxed">
+                                "Buka, periksa dimensi, dan berikan markup pada assembly ratusan ribu part langsung dari PC, tablet, atau smartphone di lantai produksi."
+                            </p>
+                        </div>
+                        <div class="pt-4 mt-4 border-t border-slate-100 text-center text-[11px] font-bold text-purple-600 uppercase tracking-wider">
+                            WebGL 3D Acceleration
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Circular Prev / Next Controls (Exact match to 00:13) -->
+                <div class="flex items-center justify-center gap-3 mt-4 relative z-20">
+                    <button onclick="moveReview(-1)" aria-label="Previous Slide" class="w-11 h-11 rounded-full bg-white border border-slate-200 shadow-sm hover:bg-slate-900 hover:text-white transition flex items-center justify-center text-slate-700">
+                        <i class="ph-bold ph-caret-left"></i>
+                    </button>
+                    <button onclick="moveReview(1)" aria-label="Next Slide" class="w-11 h-11 rounded-full bg-white border border-slate-200 shadow-sm hover:bg-slate-900 hover:text-white transition flex items-center justify-center text-slate-700">
+                        <i class="ph-bold ph-caret-right"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- CTA SECTION (Clean High-Contrast Card)                     -->
+    <!-- ========================================================== -->
+    <section id="harga" class="py-12 px-4 sm:px-6">
+        <div id="demo" class="max-w-6xl mx-auto rounded-[36px] p-10 sm:p-16 text-center text-white relative overflow-hidden shadow-2xl" style="background: radial-gradient(circle at 50% 0%, #1D4ED8 0%, #0F172A 75%);">
+            <div class="relative z-10 max-w-3xl mx-auto reveal-up">
+                <h2 class="text-3xl sm:text-5xl font-extrabold mb-5 leading-tight">
+                    Siap Modernisasi <br class="sm:hidden"/>
+                    <span class="serif-accent font-normal text-4xl sm:text-6xl text-sky-300">Proses Desain Anda?</span>
+                </h2>
+                <p class="text-base sm:text-lg text-slate-300 mb-8 max-w-xl mx-auto">
+                    Bergabung dengan 10.000+ perusahaan manufaktur yang sudah beralih ke CrownCAD
+                </p>
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <a href="#demo" class="px-8 py-4 rounded-full font-bold text-sm shadow-xl hover:scale-105 transition flex items-center gap-2 bg-white text-slate-900">
+                        <span>Jadwalkan Demo Executive</span>
+                        <i class="ph-bold ph-arrow-right"></i>
+                    </a>
+                    <a href="#harga" class="px-8 py-4 rounded-full font-semibold text-sm backdrop-blur-md hover:bg-white/20 transition border border-white/30">
+                        Lihat Harga
+                    </a>
+                </div>
+                <div class="flex flex-wrap justify-center gap-3">
+                    <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-medium">
+                        <i class="ph-fill ph-check-circle text-emerald-400"></i>
+                        Trial 30 hari gratis
+                    </span>
+                    <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-medium">
+                        <i class="ph-fill ph-check-circle text-emerald-400"></i>
+                        99.9% uptime SLA
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- FOOTER WITH GIANT BLURRED WATERMARK (00:15 - 00:17)        -->
+    <!-- ========================================================== -->
+    <footer class="pt-10 pb-8 px-4 sm:px-6">
+        <div class="max-w-6xl mx-auto bg-white rounded-[36px] border border-slate-200/80 shadow-soft pt-12 sm:pt-16 px-8 sm:px-14 overflow-hidden relative">
+            
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 relative z-10">
+                <!-- Left Tagline -->
+                <div class="md:col-span-5">
+                    <div class="flex items-center gap-2.5 mb-4">
+                        <img src="assets/logo.png" alt="CrownCAD" class="h-9 w-auto object-contain" />
+                    </div>
+                    <p class="text-slate-700 font-semibold text-base sm:text-lg leading-snug max-w-xs mb-4">
+                        CrownCAD adalah platform CAD 3D cloud-native Indonesia dengan kernel 100% buatan dalam negeri—semua dalam satu browser.
+                    </p>
+                    <p class="text-xs text-slate-400">&copy; 2026 CrownCAD Indonesia. All rights reserved.</p>
+                </div>
+
+                <!-- Links Columns -->
+                <div class="md:col-span-2">
+                    <h4 class="font-bold text-slate-900 mb-3 text-xs uppercase tracking-wider">Produk</h4>
+                    <ul class="space-y-2.5 text-sm text-slate-500 font-medium">
+                        <li><a href="#produk" class="hover:text-blue-600 transition">Part Design</a></li>
+                        <li><a href="#produk" class="hover:text-blue-600 transition">Assembly</a></li>
+                        <li><a href="#produk" class="hover:text-blue-600 transition">Drawing 2D</a></li>
+                        <li><a href="#produk" class="hover:text-blue-600 transition">Sheet Metal</a></li>
+                    </ul>
+                </div>
+
+                <div class="md:col-span-2">
+                    <h4 class="font-bold text-slate-900 mb-3 text-xs uppercase tracking-wider">Perusahaan</h4>
+                    <ul class="space-y-2.5 text-sm text-slate-500 font-medium">
+                        <li><a href="#mengapa" class="hover:text-blue-600 transition">Tentang</a></li>
+                        <li><a href="#solusi" class="hover:text-blue-600 transition">Solusi Cloud</a></li>
+                        <li><a href="#harga" class="hover:text-blue-600 transition">Harga</a></li>
+                        <li><a href="#demo" class="hover:text-blue-600 transition">Kontak</a></li>
+                    </ul>
+                </div>
+
+                <!-- Socials -->
+                <div class="md:col-span-3">
+                    <h4 class="font-bold text-slate-900 mb-3 text-xs uppercase tracking-wider">Ikuti Kami</h4>
+                    <div class="flex items-center gap-2.5">
+                        <a href="#" aria-label="Instagram" class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-slate-900 hover:text-white transition">
+                            <i class="ph-bold ph-instagram-logo text-lg"></i>
+                        </a>
+                        <a href="#" aria-label="X / Twitter" class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-slate-900 hover:text-white transition">
+                            <i class="ph-bold ph-x-logo text-lg"></i>
+                        </a>
+                        <a href="#" aria-label="LinkedIn" class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-slate-900 hover:text-white transition">
+                            <i class="ph-bold ph-linkedin-logo text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Giant Cropped Blurred Brand Watermark (00:16) -->
+            <div class="text-center pt-4 -mb-6 sm:-mb-10 overflow-hidden">
+                <div class="footer-watermark font-extrabold tracking-tighter">
+                    CrownCAD
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // 1. LENIS SMOOTH SCROLL (Safe Fallback)
+        // ============================================
+        let lenis = null;
+        if (typeof Lenis !== 'undefined') {
+            lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                smooth: true,
+                smoothTouch: false,
+            });
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+        }
+
+        // Scroll Progress Bar
+        const scrollProgress = document.getElementById('scroll-progress');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? scrollTop / docHeight : 0;
+            scrollProgress.style.transform = `scaleX(${progress})`;
+        }, { passive: true });
+
+        // ============================================
+        // 2. NAVBAR HIDE/SHOW ON SCROLL
+        // ============================================
+        const header = document.getElementById('main-header');
+        let lastScrollY = window.scrollY;
+
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > 120) {
+                if (currentScrollY < lastScrollY) {
+                    header.style.transform = 'translateX(-50%) translateY(0)';
+                    header.style.opacity = '1';
+                } else if (currentScrollY > lastScrollY) {
+                    header.style.transform = 'translateX(-50%) translateY(-130%)';
+                    header.style.opacity = '0';
+                }
+            } else {
+                header.style.transform = 'translateX(-50%) translateY(0)';
+                header.style.opacity = '1';
+            }
+            lastScrollY = currentScrollY;
+        }, { passive: true });
+
+        // ============================================
+        // 3. INTERSECTION OBSERVERS (REVEAL & SCATTER)
+        // ============================================
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+
+        document.querySelectorAll('.reveal-up').forEach(el => revealObserver.observe(el));
+
+        // Expanding Scatter Gallery Trigger (00:01 - 00:03)
+        const scatterStage = document.getElementById('scatter-stage');
+        if (scatterStage) {
+            const scatterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        scatterStage.classList.add('is-expanded');
+                    }
+                });
+            }, { threshold: 0.25 });
+            scatterObserver.observe(scatterStage);
+        }
+
+        // ============================================
+        // 4. BENTO LIVE CYCLING PILL (00:05)
+        // ============================================
+        const pillStates = [
+            { text: 'Dual-Kernel DGM + DCS', bg: 'bg-emerald-500', icon: 'ph-lightning' },
+            { text: 'Handle 300.000+ Parts', bg: 'bg-blue-600', icon: 'ph-cube' },
+            { text: 'Real-Time Cloud Sync', bg: 'bg-rose-500', icon: 'ph-cloud-arrow-up' }
+        ];
+        let pillIndex = 0;
+        const bentoPill = document.getElementById('bento-pill');
+        const bentoPillIcon = document.getElementById('bento-pill-icon');
+        const bentoPillText = document.getElementById('bento-pill-text');
+
+        setInterval(() => {
+            if (!bentoPill) return;
+            pillIndex = (pillIndex + 1) % pillStates.length;
+            const state = pillStates[pillIndex];
+            bentoPill.style.transform = 'scale(0.92)';
+            bentoPill.style.opacity = '0.6';
+            setTimeout(() => {
+                bentoPillIcon.className = `w-8 h-8 rounded-full ${state.bg} text-white flex items-center justify-center text-sm shadow-sm transition-colors`;
+                bentoPillIcon.innerHTML = `<i class="ph-bold ${state.icon}"></i>`;
+                bentoPillText.textContent = state.text;
+                bentoPill.style.transform = 'scale(1)';
+                bentoPill.style.opacity = '1';
+            }, 220);
+        }, 2600);
+
+        // ============================================
+        // 5. COUNTER ANIMATION
+        // ============================================
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = parseFloat(counter.dataset.target);
+                    const prefix = counter.dataset.prefix || '';
+                    const suffix = counter.dataset.suffix || '';
+                    const duration = 1800;
+                    const startTime = performance.now();
+
+                    function updateCounter(currentTime) {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                        const current = target * eased;
+
+                        let displayValue;
+                        if (target >= 100000) {
+                            displayValue = Math.floor(current).toLocaleString('id-ID');
+                        } else if (target % 1 !== 0) {
+                            displayValue = current.toFixed(1);
+                        } else {
+                            displayValue = Math.floor(current);
+                        }
+                        counter.textContent = `${prefix}${displayValue}${suffix}`;
+                        if (progress < 1) requestAnimationFrame(updateCounter);
+                    }
+                    requestAnimationFrame(updateCounter);
+                    counterObserver.unobserve(counter);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
+
+        // ============================================
+        // 6. TAB SWITCHER & CARD SLIDER
+        // ============================================
+        function switchCapTab(tabKey) {
+            const tabs = ['core', 'pro', 'collab'];
+            const slider = document.getElementById('tab-slider');
+            const container = slider.parentElement;
+
+            tabs.forEach(key => {
+                const btn = document.getElementById('tab-btn-' + key);
+                const panel = document.getElementById('tab-panel-' + key);
+
+                if (key === tabKey) {
+                    btn.classList.add('text-white', 'font-bold');
+                    btn.classList.remove('text-slate-700', 'font-medium');
+
+                    const containerRect = container.getBoundingClientRect();
+                    const btnRect = btn.getBoundingClientRect();
+                    slider.style.left = (btnRect.left - containerRect.left) + 'px';
+                    slider.style.width = btnRect.width + 'px';
+
+                    panel.classList.remove('hidden');
+                } else {
+                    btn.classList.remove('text-white', 'font-bold');
+                    btn.classList.add('text-slate-700', 'font-medium');
+                    panel.classList.add('hidden');
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const activeBtn = document.getElementById('tab-btn-core');
+            const slider = document.getElementById('tab-slider');
+            if (activeBtn && slider) {
+                const containerRect = slider.parentElement.getBoundingClientRect();
+                const btnRect = activeBtn.getBoundingClientRect();
+                slider.style.left = (btnRect.left - containerRect.left) + 'px';
+                slider.style.width = btnRect.width + 'px';
+            }
+        });
+
+        function slideCards(panelKey, direction) {
+            const slider = document.getElementById('slider-' + panelKey);
+            if (!slider) return;
+            const card = slider.querySelector('.cap-card');
+            const step = card ? card.getBoundingClientRect().width + 24 : 360;
+            slider.scrollBy({ left: direction * step, behavior: 'smooth' });
+        }
+
+        // ============================================
+        // 7. ROTATING ARC WHEEL (00:07 - 00:10)
+        // ============================================
+        const arcData = [
+            { title: 'SOLIDWORKS (.sldprt / .sldasm)', desc: 'Impor & ekspor langsung model part maupun assembly SOLIDWORKS dengan presisi penuh.' },
+            { title: 'CATIA V5 / V6', desc: 'Kompatibilitas penuh untuk industri otomotif dan dirgantara dengan pembacaan geometri permukaan kompleks.' },
+            { title: 'Siemens NX (UG)', desc: 'Baca & ekspor langsung file assembly dan part NX tanpa konversi perantara.' },
+            { title: 'PTC Creo & Autodesk Inventor', desc: 'Kolaborasi lintas ekosistem CAD dengan dukungan pembacaan fitur dan struktur pohon model.' },
+            { title: 'Standar Internasional (STEP, IGES, Parasolid, STL)', desc: 'Pertukaran data netral berstandar industri untuk CAM, CAE, dan 3D printing.' }
+        ];
+
+        let activeArcIndex = 2;
+        const arcCards = document.querySelectorAll('.arc-card');
+        const arcTitle = document.getElementById('arc-title');
+        const arcDesc = document.getElementById('arc-desc');
+
+        function renderArcWheel() {
+            const isMobile = window.innerWidth < 640;
+            const spacingX = isMobile ? 95 : 165;
+
+            arcCards.forEach((card, idx) => {
+                // Relative offset from active index (-2 to +2)
+                let diff = idx - activeArcIndex;
+                if (diff > 2) diff -= 5;
+                if (diff < -2) diff += 5;
+
+                const translateX = diff * spacingX;
+                const translateY = Math.pow(Math.abs(diff), 1.65) * (isMobile ? 14 : 22);
+                const rotate = diff * 11;
+                const scale = diff === 0 ? 1.12 : (Math.abs(diff) === 1 ? 0.92 : 0.78);
+                const opacity = diff === 0 ? 1 : (Math.abs(diff) === 1 ? 0.75 : 0.4);
+                const zIndex = 10 - Math.abs(diff);
+
+                card.style.transform = `translate(${translateX}px, ${translateY}px) rotate(${rotate}deg) scale(${scale})`;
+                card.style.opacity = opacity;
+                card.style.zIndex = zIndex;
+                card.classList.toggle('ring-2', diff === 0);
+                card.classList.toggle('ring-blue-600', diff === 0);
+            });
+
+            if (arcTitle && arcDesc) {
+                arcTitle.textContent = arcData[activeArcIndex].title;
+                arcDesc.textContent = arcData[activeArcIndex].desc;
+            }
+        }
+
+        function selectArcItem(index) {
+            activeArcIndex = index;
+            renderArcWheel();
+        }
+
+        renderArcWheel();
+        window.addEventListener('resize', renderArcWheel);
+        setInterval(() => {
+            activeArcIndex = (activeArcIndex + 1) % arcData.length;
+            renderArcWheel();
+        }, 3400);
+
+        // ============================================
+        // 8. 3-CARD TILTED ENVELOPE CAROUSEL (00:11 - 00:14)
+        // ============================================
+        let activeReviewIndex = 0;
+        const reviewCards = document.querySelectorAll('.review-card');
+
+        function renderReviews() {
+            const isMobile = window.innerWidth < 768;
+            const offsetX = isMobile ? 40 : 340;
+
+            reviewCards.forEach((card, idx) => {
+                let diff = idx - activeReviewIndex;
+                if (diff > 1) diff -= 3;
+                if (diff < -1) diff += 3;
+
+                if (diff === 0) {
+                    card.style.transform = 'translate(0px, 0px) rotate(0deg) scale(1)';
+                    card.style.opacity = '1';
+                    card.style.filter = 'blur(0px)';
+                    card.style.zIndex = '20';
+                    card.style.pointerEvents = 'auto';
+                } else {
+                    const dir = diff > 0 ? 1 : -1;
+                    card.style.transform = `translate(${dir * offsetX}px, 24px) rotate(${dir * 8}deg) scale(0.88)`;
+                    card.style.opacity = isMobile ? '0' : '0.55';
+                    card.style.filter = 'blur(1.5px)';
+                    card.style.zIndex = '10';
+                    card.style.pointerEvents = 'none';
+                }
+            });
+        }
+
+        function moveReview(step) {
+            activeReviewIndex = (activeReviewIndex + step + reviewCards.length) % reviewCards.length;
+            renderReviews();
+        }
+
+        renderReviews();
+        window.addEventListener('resize', renderReviews);
+
+        // ============================================
+        // 9. MOBILE MENU
+        // ============================================
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function toggleMobileMenu() {
+            const isOpen = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+            mobileMenuBtn.setAttribute('aria-expanded', !isOpen);
+            mobileMenu.classList.toggle('translate-x-full', isOpen);
+            mobileMenu.classList.toggle('translate-x-0', !isOpen);
+            document.body.style.overflow = !isOpen ? 'hidden' : '';
+        }
+
+        if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                mobileMenu.classList.add('translate-x-full');
+                mobileMenu.classList.remove('translate-x-0');
+                document.body.style.overflow = '';
+            });
+        });
+    </script>
+</body>
+</html>
